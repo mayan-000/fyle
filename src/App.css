@@ -1,0 +1,23 @@
+.vh-50 {
+  height: 70vh;
+}
+
+.stack-repos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 50px;
+  gap: 2%;
+}
+
+.stack-repos > * {
+  width: 32%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  align-self:stretch;
+}
+
+.wb {
+  word-break: break-word;
+}
