@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { getRepositories, getUser } from "./services/API";
 import Input from "@mui/material/Input";
@@ -21,24 +21,35 @@ function App() {
   const [notFound, setNotFound] = useState<boolean>(false);
   const totalPages = useRef<number>(0);
 
-  const buttonClickHandler = async () => {
-    try {
-      setLoading(true);
-      setTouched(true);
-      const result = await Promise.all([
-        getUser(userName || ""),
-        getRepositories(userName || "", 1),
-      ]);
-      totalPages.current = parseInt("" + (result[0].public_repos + 5) / 6);
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        setTouched(true);
+        const result = await Promise.all([
+          getUser(userName || ""),
+          getRepositories(userName || "", 1),
+        ]);
+        totalPages.current = parseInt("" + (result[0].public_repos + 5) / 6);
 
-      setProfile(result[0]);
-      setRepos(result[1]);
-    } catch (error) {
-      setTouched(false);
-      setNotFound(true);
-    } finally {
-      setLoading(false);
+        setProfile(result[0]);
+        setRepos(result[1]);
+      } catch (error) {
+        setTouched(false);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userName) {
+      getData();
     }
+  }, [userName]);
+
+  const formSubmitHandler = (e: any) => {
+    e.preventDefault();
+    setUserName(e.target[0].value);
   };
 
   const pageChangeHandler = async (e: any, value: number) => {
@@ -54,23 +65,12 @@ function App() {
       <header className="d-flex justify-content-between p-4 bg-light rounded">
         <h1>Enter Github Username</h1>
 
-        <div>
-          <Input
-            className="mx-4"
-            placeholder="Enter Username"
-            value={userName}
-            onChange={(e) => {
-              setUserName(e.target.value);
-            }}
-          />
-          <Button
-            onClick={buttonClickHandler}
-            disabled={!userName}
-            variant="contained"
-          >
+        <form onSubmit={formSubmitHandler}>
+          <Input className="mx-4" placeholder="Enter Username" />
+          <Button type="submit" variant="contained">
             Search User
           </Button>
-        </div>
+        </form>
       </header>
 
       {touched ? (

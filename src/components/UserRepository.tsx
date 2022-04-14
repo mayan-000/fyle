@@ -18,7 +18,7 @@ const UserRepository: React.FC<UserRepositoryProps> = ({
     getLanguage(userName || "", repo?.name || "").then((languages) => {
       setLanguages(languages);
     });
-  }, []);
+  }, [repo?.name, userName]);
 
   return (
     <>
